@@ -1,0 +1,26 @@
+# Racket build output
+compiled/
+**/compiled/
+*.zo
+# local SQLite and backups
+*.sqlite
+*.sqlite3
+*.sqlite-wal
+*.sqlite-shm
+*.db
+*.db-wal
+*.db-shm
+backups/
+local-media/
+# credentials and local configuration
+.env
+.env.*
+!.env.example
+secrets/
+*.key
+*.pem
+# editor/worktree scratch
+.DS_Store
+*.swp
+*.tmp
+.agent-session/
