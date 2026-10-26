@@ -1,18 +1,21 @@
-# Plan: Bootstrap Racket 9.3 toolchain, verify Core/Football scaffold, implement CORE-001 (TDD)
+# Plan: Finish the Racket Platform Kit bootstrap (toolchain, gate, CORE-001)
 
 ## Overview
-Follow the repository bootstrap procedure of `~/src/racket-platform-kit/` (per AGENTS.md and docs/agents/MASTER_PROMPT.md): install the owner-mandated Racket 9.3 into a project-owned, git-ignored `.bin/` folder and make the repo scripts prefer it; run the mandatory doctor/check scaffold verification against that toolchain (Core runs without Football); then implement the first unblocked roadmap ticket, CORE-001, as a minimal test-driven slice adding runtime HTTP tests (200 health route, 404, 405) and an enforced loopback-only binding guard. Strict Core/Football separation, official Racket distribution modules only, no new dependencies.
+Implement the plan captured in `.planning/waves-pre-plan-backup/`, reconciled against the repository's *actual* state rather than the backup's assumptions. The backup's W0 was marked FAILED, but inspection shows the project-local Racket 9.3 is already installed under `.bin/racket-9.3/` and `.gitignore` already ignores `.bin/`; what is missing is the leftover-installer cleanup and the `scripts/env.sh` shim that every later Verify command depends on. From there the waves pin the baseline scripts to that toolchain, make the CORE-001 `/health` HTTP adapter testable (pure `route-request` + parameterised `#:listen-ip`) and actually run its tests in `scripts/check.sh`, and finally absorb the orphan CORE-002 composition document as a numbered ADR. All four waves are small, file-scoped and individually verifiable; nothing beyond the prototype's documented scope (no auth, sessions, CSRF, TLS, JSON API, extension loader) is introduced.
 
 ## Waves
-- [Inbox] W0: Project-local Racket 9.3 toolchain (.bin/) and .gitignore → waves/W0-project-local-racket-9.3.md
-- [Inbox] W1: Bootstrap scaffold verification (Core-only and Football samples) → waves/W1-bootstrap-scaffold-verification.md
-- [Inbox] W2: CORE-001 TDD slice for the local-only Core HTTP app → waves/W2-core001-local-http-tdd.md
+- [FAILED] W0: Finish the project-local Racket 9.3 toolchain (delete the 272 MB installer artifact, add `scripts/env.sh`) → waves/W0-finish-local-racket-toolchain.md
+- [Inbox] W1: Pin `scripts/doctor.sh` / `scripts/check.sh` to the project-local Racket and gate on v9.3 → waves/W1-pin-scripts-to-local-racket.md
+- [Inbox] W2: CORE-001 acceptance — pure `route-request` status mapping, `#:listen-ip` default of loopback, adapter tests, wire `tests/core001/` into `check.sh` → waves/W2-core001-health-http-acceptance.md
+- [Inbox] W3: ADR 0006 — Core/extension composition contract (documentation only, absorbs the orphan CORE-002 note) → waves/W3-core002-composition-adr.md
 
 ## Constraints
-- Execute waves strictly in order W0 → W1 → W2 (W1 verifies W0's toolchain; W2 needs W1's green baseline).
-- All file paths in wave docs live in the target repository `/home/user/src/racket-platform-kit/`.
-- The network install of the official Racket 9.3 FULL distribution (W0) is explicitly approved by the project owner's instruction (AGENTS.md priority 1); no other network access, package installs, or global/system configuration changes.
-- `core/` must remain football-agnostic: no Football imports in core modules or core tests; import graph `extensions/football/ -> core public API` only.
-- Only official Racket distribution modules (racket/base, rackunit, racket/tcp, racket/port, racket/string, net/url, web-server/*); no new dependencies, macros, DSLs, or speculative abstractions.
-- TDD: write failing tests first (W2 step 1 must fail before the `core/http-server.rkt` change); never skip, delete, or loosen failing tests to go green.
-- No production-readiness claims; the HTTP adapter remains development-only, loopback-bound; report NOT EXECUTED rather than assuming success.
+- Do NOT re-download or re-run `racket-9.3-installer.sh`: the toolchain is already installed at `.bin/racket-9.3/` (unix-style, executables in `.bin/racket-9.3/bin`, NOT `.bin/racket-9.3/racket`). The only installer action is deleting the leftover script.
+- Test paths are `tests/core001/http-server-test.rkt` and `core/tests/platform-test.rkt` — the backup document's `core/tests/http-server-test.rkt` does not exist and must not be created as a duplicate.
+- `/health` renders **xexpr, not JSON** (`"Demo process is running"`); do not convert the prototype to a JSON API.
+- Loopback-only is a hard property: `default-listen-ip` must stay `"127.0.0.1"`; never default to `0.0.0.0` and never expose the prototype publicly.
+- No new packages, no `raco pkg install`, no network access, no system-wide Racket install; everything runs through `. ./scripts/env.sh`.
+- Preserve the Core/Football boundary: `tests/boundary-check.rkt` must keep passing and Core must not require extensions.
+- Everything under `.planning/` is read/written exclusively through `planning-read` / `planning-write`.
+- No wave-finalization steps (branch/PR/board) belong in wave docs — the coordinator handles that externally.
+- Out of scope for this plan: CORE-002 implementation (extension discovery/loading/ordering), authz, persistence, and any production hardening beyond the existing prototype notes.
