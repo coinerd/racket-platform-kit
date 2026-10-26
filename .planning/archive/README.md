@@ -1,8 +1,9 @@
 # Planning Archive
 
 Executed and superseded planning artifacts, kept for provenance. Nothing in this
-directory is live: no file here should be read as current intent. The active
-plan is always `.planning/PLAN.md`.
+directory is live: no file here should be read as current intent. When a plan is
+active it lives at `.planning/PLAN.md`; after archiving, no plan is active until
+the next one is written there.
 
 ## Contents
 
