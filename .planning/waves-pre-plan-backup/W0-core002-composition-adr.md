@@ -41,6 +41,7 @@ Also append one index line to `docs/adr/README.md` in the existing list format: 
 
 ---
 
-**SUPERSEDED** — this note's content was absorbed into `.planning/waves/W3-core002-composition-adr.md`
+**SUPERSEDED** — this note's content was absorbed into `docs/adr/0006-core-extension-composition.md`
+via `.planning/archive/2026-10-26-bootstrap-toolchain-core001-adr/waves/W3-core002-composition-adr.md`
 and delivered as `docs/adr/0006-core-extension-composition.md`. Kept for history; do not act on it.
 
