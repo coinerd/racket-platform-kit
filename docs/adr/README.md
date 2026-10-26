@@ -7,3 +7,4 @@ ADRs document choices with durable consequences. Format: status, context, at lea
 - [0003 — UI and communication](0003-web-ui-and-messaging.md)
 - [0004 — Extension design without premature framework](0004-extension-composition.md)
 - [0005 — Authorization and guardian boundaries](0005-authz-and-guardians.md)
+- [0006 — Core/extension composition](0006-core-extension-composition.md)
