@@ -24,3 +24,5 @@ secrets/
 *.swp
 *.tmp
 .agent-session/
+# project-local Racket toolchain (W0)
+.bin/
