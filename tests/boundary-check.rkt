@@ -5,9 +5,13 @@
 ;; graph check once generated modules/re-exports enter the project.
 (require racket/file
          racket/path
+         racket/runtime-path
          racket/string)
 
-(define core-directory (build-path (current-directory) "core"))
+(define-runtime-path repo-root "..")
+(define core-directory
+  ;; Anchor to the repository root regardless of raco test's per-file CWD.
+  (simplify-path (build-path repo-root "core")))
 
 (for ([p (in-directory core-directory)]
       #:when (equal? (path-get-extension p) #".rkt"))
